@@ -10,7 +10,9 @@
   },
   "author": "",
   "license": "MIT",
-  "dependencies": {},
+  "dependencies": {
+    "@nativewrappers/client": "^1.7.33"
+  },
   "devDependencies": {
     "@citizenfx/client": "^2.0.7549-1",
     "@citizenfx/server": "^2.0.7549-1",

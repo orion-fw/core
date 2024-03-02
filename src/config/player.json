@@ -1,0 +1,12 @@
+{
+    "dbSave": 300000,
+    "defaultGroup": "user",
+    "groups": {
+        "user": {
+            "allPermissions": false
+        },
+        "admin": {
+            "allPermissions": true
+        }
+    }
+}
