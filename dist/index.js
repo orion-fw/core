@@ -1,0 +1,1 @@
+function registerCommand(commandName,handlerFunction,config,restricted){setImmediate(()=>{emit("chat:addSuggestion",`/${commandName}`,config?.description,config.arguments)});RegisterCommand(commandName,(source,args,raw)=>{if(config.adminLevel){}console.log("trigger");handlerFunction(source,args,raw)},restricted)}export{registerCommand};
