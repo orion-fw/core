@@ -1,23 +1,37 @@
 {
-    "compilerOptions": {
-      "esModuleInterop": true,
-      "allowSyntheticDefaultImports": true,
-      "module": "NodeNext",
-      "target": "ES2020",
-      "types": ["@citizenfx/server", "@types/node"],
-      "lib": ["ES2020"],
-      "skipLibCheck": true,
-      "moduleResolution": "nodenext",
-      "strict": false, // Disables strict type-checking options
-      "noImplicitAny": false, // Allow expressions and declarations with an implied 'any' type
-      "noImplicitThis": false, // Allow 'this' expressions with an implied 'any' type
-      "alwaysStrict": false, // Parse in strict mode and emit "use strict" for each source file
-      "strictNullChecks": false, // When type checking, take into account 'null' and 'undefined'
-      "strictFunctionTypes": false, // Disable strict checking of function types
-      "strictPropertyInitialization": false, // Disable strict checking of property initialization in classes
-      "strictBindCallApply": false, // Disable strict checking of the 'bind', 'call', and 'apply' methods on functions
-      "noEmitOnError": false // Do not emit outputs if any type checking errors were reported
+  "include": ["src/**/*"],
+  "exclude": ["**/node_modules", "**/__tests__/*"],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "*": ["types/*"],
+      "@server": ["src/server/index.ts"],
+      "@server/*": ["src/server/*"],
+      "@client": ["src/client/index.ts"],
+      "@client/*": ["src/client/*"],
+      "@/*": ["./*"]
     },
-    "include": ["./**/*"],
-    "exclude": ["**/node_modules", "**/__tests__/*"]
+    "outDir": "dist",
+
+    "module": "commonjs",
+    "target": "es6",
+    "allowJs": true,
+    "lib": ["es2017"],
+    "types": ["node"],
+    "moduleResolution": "node",
+    "strict": false,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "removeComments": true,
+    "pretty": true,
+    "noImplicitAny": false, // Allow expressions and declarations with an implied 'any' type
+    "noImplicitThis": false, // Allow 'this' expressions with an implied 'any' type
+    "alwaysStrict": false, // Parse in strict mode and emit "use strict" for each source file
+    "strictNullChecks": false, // When type checking, take into account 'null' and 'undefined'
+    "strictFunctionTypes": false, // Disable strict checking of function types
+    "strictPropertyInitialization": false, // Disable strict checking of property initialization in classes
+    "strictBindCallApply": false, // Disable strict checking of the 'bind', 'call', and 'apply' methods on functions
+    "noEmitOnError": false // Do not emit outputs if any type checking errors were reported
   }
+}
