@@ -28,7 +28,6 @@ export class Character {
   private _sex: string = "";
   private _nationality: string = "";
   private _backstory: string = "";
-  private _phoneNumber: number = 0;
   private _bank: number = 0;
   private _customObjects: Map<string, any> = new Map();
 
@@ -62,9 +61,8 @@ export class Character {
       if (data.nationality) this.setNationality(data.nationality);
       if (data.backstory) this.setBackstory(data.backstory);
       setImmediate(async () => {
-        this.setPhoneNumber(await global.exports.npwd.generatePhoneNumber());
         global.exports.oxmysql.insert(
-          "INSERT INTO characters (citizenId, license, firstName, lastName, dob, height, sex, bank, nationality, backstory, coords, phoneNumber) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+          "INSERT INTO characters (citizenId, license, firstName, lastName, dob, height, sex, bank, nationality, backstory, coords) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
           [
             this.getCitizenId(),
             license,
@@ -77,7 +75,6 @@ export class Character {
             this.getNationality(),
             this.getBackstory(),
             JSON.stringify(Character.defaultCoords),
-            this.getPhoneNumber(),
           ]
         );
       });
@@ -90,7 +87,6 @@ export class Character {
       if (data.nationality) this.setNationality(data.nationality);
       if (data.backstory) this.setBackstory(data.backstory);
       // @ts-ignore
-      if (data.phone_number) this.setPhoneNumber(data.phone_number);
       // @ts-ignore
       if (data.bank) this.setBank(data.bank);
     }
@@ -98,7 +94,6 @@ export class Character {
   }
 
   public save = (playerLeft?: boolean, newPlayer?: boolean): void => {
-    const inventory = global.exports.ox_inventory.Inventory(this._source);
     if (!newPlayer) {
       const ped: number = GetPlayerPed(this._source);
       const coords: number[] = GetEntityCoords(ped, false);
@@ -111,7 +106,7 @@ export class Character {
 
     setImmediate(async () => {
       const affectedRows = await global.exports.oxmysql.update_async(
-        "UPDATE characters SET firstName = ?, lastName = ?, dob = ?, height = ?, sex = ?, bank = ?, nationality = ?, backstory = ?, coords = ?, inventory = ?, phoneNumber = ? WHERE citizenId = ?",
+        "UPDATE characters SET firstName = ?, lastName = ?, dob = ?, height = ?, sex = ?, bank = ?, nationality = ?, backstory = ?, coords = ? WHERE citizenId = ?",
         [
           this._firstName,
           this._lastName,
@@ -122,8 +117,6 @@ export class Character {
           this._nationality,
           this._backstory,
           JSON.stringify(this._coords),
-          JSON.stringify(inventory.items) || "{}",
-          this._phoneNumber,
           this._citizenId,
         ]
       );
@@ -182,7 +175,6 @@ export class Character {
       sex: this._sex,
       nationality: this._nationality,
       backstory: this._backstory,
-      phone_number: this._phoneNumber,
       bank: this._bank,
     };
 
@@ -403,129 +395,6 @@ export class Character {
 
   public getObject = (key: string): any => this._customObjects.get(key);
 
-  public getCash = (): number => {
-    const money = global.exports.ox_inventory.GetItem(
-      this._source,
-      "money",
-      null,
-      false
-    );
-    if (!money) return 0;
-    return money.count;
-  };
-
-  public setCash = (amount: number, updateClientData?: boolean): void => {
-    let moneyAmount: number = 0;
-    let previousVal: number = 0;
-    if (characterConfig.handleMoney) {
-      if (characterConfig.inventory === "ox_inventory") {
-        const money = global.exports.ox_inventory.GetItem(
-          this._source,
-          "money",
-          null,
-          false
-        );
-        previousVal = money.count;
-
-        if (!money) {
-          global.exports.ox_inventory.AddItem(this._source, "money", amount);
-          moneyAmount = amount;
-        } else if (money.count > amount) {
-          const newAmount = money.count - amount;
-          global.exports.ox_inventory.RemoveItem(
-            this._source,
-            "money",
-            newAmount
-          );
-          moneyAmount = newAmount;
-        } else {
-          const newAmount = amount - money.count;
-          global.exports.ox_inventory.AddItem(this._source, "money", newAmount);
-          moneyAmount = newAmount;
-        }
-      }
-    }
-
-    if (updateClientData)
-      UpdateCharacterDataClient(
-        this._source,
-        this._citizenId,
-        "update",
-        "cash",
-        moneyAmount,
-        previousVal
-      );
-  };
-
-  public addCash = (amount: number, updateClientData?: boolean): void => {
-    let moneyAmount: number = 0;
-    let previousVal: number = 0;
-    if (characterConfig.handleMoney) {
-      if (characterConfig.inventory === "ox_inventory") {
-        const money = global.exports.ox_inventory.GetItem(
-          this._source,
-          "money",
-          null,
-          false
-        );
-        global.exports.ox_inventory.AddItem(this._source, "money", amount);
-        previousVal = money.count;
-        moneyAmount = previousVal + amount;
-      }
-    }
-
-    if (updateClientData)
-      UpdateCharacterDataClient(
-        this._source,
-        this._citizenId,
-        "update",
-        "cash",
-        moneyAmount,
-        previousVal
-      );
-  };
-
-  public removeCash = (amount: number, updateClientData?: boolean): void => {
-    let moneyAmount: number = 0;
-    let previousVal: number = 0;
-    if (characterConfig.handleMoney) {
-      if (characterConfig.inventory === "ox_inventory") {
-        const money = global.exports.ox_inventory.GetItem(
-          this._source,
-          "money",
-          null,
-          false
-        );
-
-        if (!money) return;
-
-        if (money.count < amount) {
-          global.exports.ox_inventory.RemoveItem(
-            this._source,
-            "money",
-            money.count
-          );
-        } else {
-          global.exports.ox_inventory.RemoveItem(this._source, "money", amount);
-          previousVal = money.count;
-          moneyAmount = previousVal - amount;
-        }
-      } else {
-        // Other inventories here
-      }
-    }
-
-    if (updateClientData)
-      UpdateCharacterDataClient(
-        this._source,
-        this._citizenId,
-        "update",
-        "cash",
-        moneyAmount,
-        previousVal
-      );
-  };
-
   public setBank = (money: number, updateClientData?: boolean): void => {
     let previousVal: number | undefined;
     if (characterConfig.handleMoney) {
@@ -586,48 +455,5 @@ export class Character {
     }
 
     return 0;
-  };
-
-  public getPhoneNumber = (): number => this._phoneNumber;
-
-  public setPhoneNumber = (phone: number, updateClientData?: boolean): void => {
-    const previousVal: number = this._phoneNumber;
-    this._phoneNumber = phone;
-
-    if (updateClientData)
-      UpdateCharacterDataClient(
-        this._source,
-        this._citizenId,
-        "update",
-        "phoneNumber",
-        phone,
-        previousVal
-      );
-  };
-
-  public loadInventory = (): void => {
-    const player = NW.Players.get(this._source);
-    if (characterConfig.inventory === "ox_inventory") {
-      global.exports.ox_inventory.setPlayerInventory({
-        source: this._source,
-        identifier: this._citizenId,
-        name: `${this._firstName} ${this._lastName}`,
-        sex: this._sex.toString(),
-        dateofbirth: this._DOB.toLocaleString(),
-        groups: player?.getGroups(),
-      });
-    }
-  };
-
-  public loadPhone = (): void => {
-    if (characterConfig.phone === "npwd") {
-      global.exports.npwd.newPlayer({
-        source: this._source,
-        identifier: this._citizenId,
-        phoneNumber: this._phoneNumber,
-        firstName: this._firstName,
-        lastName: this._lastName,
-      });
-    }
   };
 }

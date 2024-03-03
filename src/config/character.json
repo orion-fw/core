@@ -8,7 +8,5 @@
         "w": 163.57
     },
     "defaultPed": "a_m_y_hipster_01",
-    "inventory": "ox_inventory",
-    "phone": "npwd",
     "coordsSaveTimeout": 120000
 }

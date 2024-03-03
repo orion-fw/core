@@ -29,12 +29,19 @@ export const OnFirstJoin = (source: number, license: string) => {
       sendCharacters(source, license);
     }
   );
+
+  setImmediate(() => {
+    
+  })
+  
 };
 
 global.exports("OnFirstJoin", OnFirstJoin);
 
-export const GetPlayerFromSource = (source: number): Player | undefined =>
-  NW.Players.get(source);
+export const GetPlayerFromSource = (source: number): Player | undefined => {
+  return NW.Players.get(source);
+}
+  
 
 global.exports("GetPlayerFromSource", GetPlayerFromSource);
 

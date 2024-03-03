@@ -54,7 +54,6 @@ export interface CharacterDBObject {
   sex?: string;
   nationality?: string;
   backstory?: string;
-  phone_number?: number;
   bank?: number;
 }
 

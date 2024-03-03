@@ -1,5 +1,6 @@
 import { DependencyContainer } from "../dependency-container";
 import { PluginManager } from "../plugins/plugin-manager";
+import './server';
 
 export function initialize(
   container: DependencyContainer,

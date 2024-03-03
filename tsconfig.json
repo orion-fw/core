@@ -12,12 +12,11 @@
       "@/*": ["./*"]
     },
     "outDir": "dist",
-
     "module": "commonjs",
     "target": "es6",
     "allowJs": true,
     "lib": ["es2017"],
-    "types": ["node"],
+    "types": ["node",  "@citizenfx/server"],
     "moduleResolution": "node",
     "strict": false,
     "resolveJsonModule": true,

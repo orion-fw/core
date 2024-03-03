@@ -403,20 +403,6 @@ export class Player {
     // extra tables to delete the player from
   };
 
-  private _npwdTables: { [key: string]: string } = {
-    // tables from npwd to delete the player from
-    npwd_calls: "identifier",
-    npwd_marketplace_listings: "identifier",
-    npwd_match_profiles: "identifier",
-    npwd_match_views: "identifier",
-    npwd_messages: "user_identifier",
-    npwd_notes: "identifier",
-    npwd_phone_contacts: "identifier",
-    npwd_phone_gallery: "identifier",
-    npwd_twitter_profiles: "identifier",
-    npwd_twitter_tweets: "identifier",
-  };
-
   public deleteCharacter = (citizenId: string): void => {
     console.log(`Delete character ${citizenId} from player ${this._name}`);
 
@@ -438,15 +424,6 @@ export class Player {
         );
       }
     }
-
-    if (characterConfig.phone === "npwd") {
-      for (const table in this._npwdTables) {
-        global.exports.oxmysql.query(
-          `DELETE FROM ${table} WHERE ${this._npwdTables[table]} = ?`,
-          [citizenId]
-        );
-      }
-    }
   };
 
   public getCurrentCharacter = (): Character => this._currentChar;
@@ -459,9 +436,7 @@ export class Player {
       const previousVal: CharacterDataObject | null =
         this._currentChar?.toClientObject();
       this._currentChar = char;
-      char.loadInventory();
-      char.loadPhone();
-
+      
       if (updateClientData) {
         UpdatePlayerDataClient(
           this._source,
@@ -490,8 +465,6 @@ export class Player {
     const previousVal: CharacterDataObject | null =
       this._currentChar?.toClientObject();
     this._currentChar = newChar;
-    newChar.loadInventory();
-    newChar.loadPhone();
 
     if (updateClientData) {
       UpdatePlayerDataClient(

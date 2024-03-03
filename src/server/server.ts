@@ -86,6 +86,7 @@ export const sendCharacters = (
 
     player.setCharacters(chars);
   }
+  
   emitNet("NW:ShowCharacterSelection", source, newChars);
 };
 

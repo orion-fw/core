@@ -1,4 +1,6 @@
 import esbuild from "esbuild";
+import fsExtra from "fs-extra";
+import path from 'path';
 
 const IS_WATCH_MODE = process.env.IS_WATCH_MODE;
 
@@ -53,4 +55,19 @@ const buildBundle = async () => {
   }
 };
 
-buildBundle().catch(() => process.exit(1));
+await buildBundle()
+
+const copyWebBuildFolder = async () => {
+  console.log('moin')
+ const srcDir = path.join(process.cwd(), 'src/web/build');
+  const destDir = path.join(process.cwd(), 'dist/web/build');
+
+  
+  try {
+    await fsExtra.copy(srcDir, destDir);
+    console.log('Public folder copied to dist.');
+  } catch (err) {
+    console.error('Error copying public folder:', err);
+  }
+};
+copyWebBuildFolder().catch((err) => {console.log(err); process.exit(1)});
